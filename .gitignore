@@ -1,0 +1,65 @@
+# -----------------------
+# .NET
+# -----------------------
+
+# Build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+*.trx
+
+# Code coverage
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+
+# -----------------------
+# IDEs
+# -----------------------
+
+# Visual Studio
+.vs/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# -----------------------
+# OS files
+# -----------------------
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# -----------------------
+# Environment / secrets
+# -----------------------
+
+.env
+.env.*
+!.env.example
+
+# Local application settings
+appsettings.Local.json
+
+# -----------------------
+# Docker
+# -----------------------
+
+docker-compose.override.yml
