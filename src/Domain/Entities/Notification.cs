@@ -1,3 +1,5 @@
+using src.Domain.ValueObjects;
+
 namespace src.Domain.Entities;
 
 public class Notification
@@ -30,5 +32,11 @@ public class Notification
 
         Status = NotificationStatus.Read;
         ReadAt = DateTimeOffset.UtcNow;
+    }
+
+    public void UpdateContent(NotificationContent content, NotificationType type)
+    {
+        Content = content;
+        Type = type;
     }
 }

@@ -1,6 +1,29 @@
-@src_HostAddress = http://localhost:5147
+@host = http://localhost:5147
 
-GET {{src_HostAddress}}/weatherforecast/
-Accept: application/json
+### Create notification
+POST {{host}}/api/notifications
+Content-Type: application/json
 
-###
+{
+  "recipientId": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Welcome!",
+  "message": "You have been added to a channel.",
+  "type": 1
+}
+
+### Get all notifications
+GET {{host}}/api/notifications
+
+### Get by ID
+GET {{host}}/api/notifications/6f7d7565-c1ce-4a0f-9803-b180f349940d
+
+### Mark notification as read
+PUT {{host}}/api/notifications/6f7d7565-c1ce-4a0f-9803-b180f349940d
+Content-Type: application/json
+
+{
+  "isRead": true
+}
+
+### Delete
+DELETE {{host}}/api/notifications/6f7d7565-c1ce-4a0f-9803-b180f349940d
