@@ -1,4 +1,8 @@
+using src.Messaging;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMessaging(builder.Configuration);
 
 builder.Services.AddOpenApi();
 
