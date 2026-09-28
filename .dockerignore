@@ -1,0 +1,28 @@
+# .NET build output
+**/bin/
+**/obj/
+
+# Git
+.git/
+.gitignore
+
+# IDE / editor files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Test results
+TestResults/
+**/TestResults/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Documentation and files not needed for the image
+README.md
+
+# Docker Compose is not needed inside the image
+docker-compose.yml
