@@ -8,10 +8,10 @@ public static class MessagingExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString =
-            configuration.GetConnectionString("RabbitMQ")
-            ?? throw new InvalidOperationException(
-                "RabbitMQ connection string is missing.");
+        var rabbitMqHost =
+            configuration["RABBITMQ_HOST"] ?? "localhost";
+
+        var connectionString = $"host={rabbitMqHost}";
 
         services.AddEasyNetQ(connectionString);
 

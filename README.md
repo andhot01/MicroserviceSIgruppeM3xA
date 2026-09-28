@@ -54,3 +54,22 @@ This is intended as an initial implementation and can later be replaced with per
 Messaging is abstracted through `IMessageClient`.
 
 The current implementation uses EasyNetQ and RabbitMQ. The abstraction allows the underlying message broker to be replaced without exposing EasyNetQ or RabbitMQ-specific details to the rest of the application.# MicroserviceSIgruppeM3xA
+
+## Docker and RabbitMQ
+
+This week the Notification Service was containerized using Docker and Docker Compose.
+
+### Dockerfile
+
+A multi-stage Dockerfile was added for the Notification Service using .NET 10.
+
+The Dockerfile:
+- Restores the project dependencies
+- Builds the application in Release mode
+- Publishes the application
+- Creates a smaller final image containing only the ASP.NET Core runtime and published application
+
+The Docker image can be built with:
+
+```bash
+docker build -t notification-service .
