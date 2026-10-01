@@ -1,3 +1,5 @@
+using Shared.Contracts.Events;
+using src.Application.Handlers;
 using src.Messaging;
 using src.Application.Interfaces;
 using src.Application.Services;
@@ -12,6 +14,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddSingleton<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IMessageHandler<MessagePostedEvent>, MessagePostedHandler>();
+builder.Services.AddHostedService<MessagePostedSubscription>();
 
 var app = builder.Build();
 
