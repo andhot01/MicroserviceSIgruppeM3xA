@@ -71,5 +71,28 @@ The Dockerfile:
 
 The Docker image can be built with:
 
-```bash
 docker build -t notification-service .
+
+## Message event handling
+The Notification Service now reacts to messages posted elsewhere in the Bizcord system using RabbitMQ.
+
+### Shared contracts
+A MessagePostedEvent was added to Shared.Contracts. It contains the message ID, channel ID, author ID, message content, and timestamp.
+
+Using a shared contract allows the Messaging Service to publish an event without depending directly on the Notification Service.
+
+The Notification Service also publishes a MentionDetectedEvent when a valid user mention is found. The event contains the original MessageId for traceability and the ID of the mentioned user.
+
+### Message handling
+MessagePostedSubscription runs as a background service and subscribes to MessagePostedEvent.
+
+Incoming events are passed to MessagePostedHandler, which checks the message content for a mention in the form @{userId}.
+
+When a valid mention is found: A notification is created for the mentioned user using the existing NotificationService.
+A MentionDetectedEvent is published through IMessageClient.
+And the original MessageId is included in the new event so the message can be traced through the system.
+
+If the message does not contain a valid mention, no notification or result event is created.
+
+### Testing
+Three levels of testing were added for the message handling functionality.
