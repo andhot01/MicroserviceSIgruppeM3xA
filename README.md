@@ -53,7 +53,7 @@ This is intended as an initial implementation and can later be replaced with per
 
 Messaging is abstracted through `IMessageClient`.
 
-The current implementation uses EasyNetQ and RabbitMQ. The abstraction allows the underlying message broker to be replaced without exposing EasyNetQ or RabbitMQ-specific details to the rest of the application.# MicroserviceSIgruppeM3xA
+The current implementation uses EasyNetQ and RabbitMQ. The abstraction allows the underlying message broker to be replaced without exposing EasyNetQ or RabbitMQ-specific details to the rest of the application.
 
 ## Docker and RabbitMQ
 
