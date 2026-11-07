@@ -96,3 +96,17 @@ If the message does not contain a valid mention, no notification or result event
 
 ### Testing
 Three levels of testing were added for the message handling functionality.
+
+
+## Reliability measures
+We identified failure points in our project and decided to implement a solution to of them: Duplicate message processing (more on that in the failure-point.md)
+
+### Our solution - idempotency
+- A HashSetGuid tracks successfully processed message IDs
+- A SemaphoreSlim prevents concurrent processing from bypassing the duplicate check
+- Processed messages are ignored
+- Message IDs are marked as processed after successful publishing
+
+### Testing
+A unit test was added to simulate receiving the same MessagePostedEvent twice. The test verifies that only one notif is created and that only one MentionDetectedEvent is published.
+The test passed.

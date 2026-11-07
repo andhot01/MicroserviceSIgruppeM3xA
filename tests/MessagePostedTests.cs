@@ -180,4 +180,39 @@ public class MessagePostedTests
         Assert.Equal(mentionedUserId, publishedEvent.MentionedUserId);
     }
     
+    
+    [Fact]
+    public async Task HandleAsync_WhenSameMessageReceivedTwice_CreatesOnlyOneNotification()
+    {
+        // Arrange
+        var repository = new FakeNotificationRepository();
+        var notificationService = new src.Application.Services.NotificationService(repository);
+        var messageClient = new FakeMessageClient();
+
+        var handler = new MessagePostedHandler(
+            notificationService,
+            messageClient);
+
+        var mentionedUserId = Guid.NewGuid();
+
+        var message = new MessagePostedEvent
+        {
+            MessageId = Guid.NewGuid(),
+            ChannelId = Guid.NewGuid(),
+            AuthorId = Guid.NewGuid(),
+            Content = $"Hej @{mentionedUserId}",
+            PostedAt = DateTime.UtcNow
+        };
+
+        // Act - Process the same message twice
+        await handler.HandleAsync(message);
+        await handler.HandleAsync(message);
+
+        // Assert - Only one notification should exist
+        Assert.Single(repository.GetAll());
+
+        // Only one event should have been published
+        Assert.Single(messageClient.PublishedMessages);
+    }
+
 }
