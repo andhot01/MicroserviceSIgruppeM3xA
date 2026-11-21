@@ -14,10 +14,14 @@ public class NotificationsController : ControllerBase
     {
         _service = service;
     }
-
+    
     [HttpGet]
-    public ActionResult<IEnumerable<NotificationDto>> GetAll()
+    public ActionResult<IEnumerable<NotificationDto>> GetAll(
+        [FromHeader(Name = "X-UserId")] string? userId,
+        [FromHeader(Name = "X-Role")] string? role)
     {
+        Console.WriteLine($"Authenticated user: {userId}, Role: {role}");
+
         var notifications = _service.GetAll()
             .Select(ToDto);
 
