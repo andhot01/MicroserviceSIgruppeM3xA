@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using src.Application.Interfaces;
 using src.Shared;
@@ -6,6 +7,7 @@ namespace src.Controllers;
 
 [ApiController]
 [Route("api/notifications")]
+[Authorize]     
 public class NotificationsController : ControllerBase
 {
     private readonly INotificationService _service;
@@ -40,6 +42,7 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "internal-service")] 
     public ActionResult<NotificationDto> Create(
         CreateNotificationRequest request)
     {
