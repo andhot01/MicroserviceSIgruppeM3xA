@@ -110,3 +110,55 @@ We identified failure points in our project and decided to implement a solution 
 ### Testing
 A unit test was added to simulate receiving the same MessagePostedEvent twice. The test verifies that only one notif is created and that only one MentionDetectedEvent is published.
 The test passed.
+
+
+## East/West security and Vault
+
+This week the Notification Service was protected against unauthorised calls from other services, and its secret was moved out of the source code and into HashiCorp Vault. The full design, run instructions and test results are in docs/east-west-security-and-vault.md.
+
+### East/West security
+
+- The service validates JWT Bearer tokens itself (issuer, audience, lifetime and signature), so it is protected even if the API gateway is bypassed.
+- `POST /api/notifications` is an internal endpoint. It requires the role `internal-service`, because notifications are created by other microservices and not by users.
+- The gateway exposes this endpoint as `POST /internal/notifications` and checks the same role with `RouteClaimsRequirement`. The previous public `POST /notifications` route was removed.
+- The service has no published port. It is only reachable through the gateway over the internal Docker network `bizcord-internal`.
+
+| Method | Endpoint | Description | Access |
+| ------ | -------- | ----------- | ------ |
+| POST | `/api/notifications` | Create a notification | `internal-service` |
+| GET | `/api/notifications` | Get all notifications | valid token (`member` via gateway) |
+| GET | `/api/notifications/{id}` | Get a notification by ID | valid token (`member` via gateway) |
+| PUT | `/api/notifications/{id}` | Mark a notification as read | valid token (`admin` via gateway) |
+| DELETE | `/api/notifications/{id}` | Delete a notification | valid token (`admin` via gateway) |
+
+### Vault
+
+- The JWT signing key is stored in Vault at `secret/notification` (KV v2, key `SigningKey`).
+- At startup `VaultSecretReader` reads the key with a scoped application token. The token has a read-only policy for that single path.
+- If Vault is sealed or unreachable, or the token is invalid, the service refuses to start.
+- `VAULT_ADDR` and `VAULT_TOKEN` are supplied at runtime. No secrets are committed to the repository.
+
+### Running with Vault
+
+```bash
+docker network create bizcord-internal
+
+cd vault
+docker compose up -d          # then initialise and unseal Vault, see the docs file
+
+cd ..
+read -s VAULT_TOKEN          # paste the application token
+export VAULT_TOKEN
+docker compose up -d --build
+```
+
+### Testing
+
+Ten east/west tests and six Vault tests were run, and all gave the expected result. In short:
+
+- Without a token the service returns 401. A `member` token returns 403. An `internal-service` token returns 201.
+- A token with an altered signature is rejected with 401.
+- After the port mapping was removed, a direct call to port 8000 is refused, while the same request through the gateway returns 201.
+- Vault returns 403 for an invalid token, for another path and for an attempt to overwrite the secret. A sealed Vault returns 503 and the service does not start. After unsealing, the secret is still there.
+
+The complete test tables are in the docs file.

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using src.Application.Interfaces;
 using src.Shared;
@@ -6,6 +7,7 @@ namespace src.Controllers;
 
 [ApiController]
 [Route("api/notifications")]
+[Authorize]     
 public class NotificationsController : ControllerBase
 {
     private readonly INotificationService _service;
@@ -14,10 +16,14 @@ public class NotificationsController : ControllerBase
     {
         _service = service;
     }
-
+    
     [HttpGet]
-    public ActionResult<IEnumerable<NotificationDto>> GetAll()
+    public ActionResult<IEnumerable<NotificationDto>> GetAll(
+        [FromHeader(Name = "X-UserId")] string? userId,
+        [FromHeader(Name = "X-Role")] string? role)
     {
+        Console.WriteLine($"Authenticated user: {userId}, Role: {role}");
+
         var notifications = _service.GetAll()
             .Select(ToDto);
 
@@ -36,6 +42,7 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "internal-service")] 
     public ActionResult<NotificationDto> Create(
         CreateNotificationRequest request)
     {
