@@ -42,6 +42,7 @@ builder.Services.AddControllers();
 
 
 builder.Services.AddSingleton<INotificationRepository, NotificationRepository>();
+builder.Services.AddSingleton<ISagaStateRepository, SagaStateRepository>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IMessageHandler<MessagePostedEvent>, MessagePostedHandler>();
 builder.Services.AddHostedService<MessagePostedSubscription>();
