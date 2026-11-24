@@ -22,6 +22,12 @@ public class WorkspaceDeletionSagaState
     public bool ChannelsRestored { get; set; }
     public bool CancellationNotified { get; set; }
 
+    public bool FilePurgeCancellationAttempted { get; set; }
+    public bool ChannelRestorationAttempted { get; set; }
+    public bool CancellationNotificationAttempted { get; set; }
+
+    public List<string> CompensationErrors { get; set; } = [];
+
     // Saga status
     public bool IsCompleted { get; set; }
     public bool IsFailed { get; set; }
