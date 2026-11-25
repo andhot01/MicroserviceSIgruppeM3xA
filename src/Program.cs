@@ -1,4 +1,5 @@
 using Shared.Contracts.Events;
+using Shared.Contracts.WorkspaceDeletion;
 using src.Application.Handlers;
 using src.Messaging;
 using src.Application.Interfaces;
@@ -8,6 +9,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using src.Infrastructure;
+using src.Application.Sagas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,9 +45,13 @@ builder.Services.AddControllers();
 
 builder.Services.AddSingleton<INotificationRepository, NotificationRepository>();
 builder.Services.AddSingleton<ISagaStateRepository, SagaStateRepository>();
+builder.Services.AddSingleton<WorkspaceDeletionSagaOrchestrator>();
+builder.Services.AddHostedService<WorkspaceDeletionSagaSubscription>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IMessageHandler<MessagePostedEvent>, MessagePostedHandler>();
+builder.Services.AddScoped<IMessageHandler<SendWorkspaceDeletedNotification>,WorkspaceDeletedNotificationHandler>();
 builder.Services.AddHostedService<MessagePostedSubscription>();
+builder.Services.AddHostedService<WorkspaceDeletedNotificationSubscription>();
 
 var app = builder.Build();
 
