@@ -12,7 +12,7 @@ public class WorkspaceDeletionSagaOrchestrator :
     IMessageHandler<ChannelsArchivedEvent>,
     IMessageHandler<FilePurgeStartedEvent>,
     IMessageHandler<FilePurgeCompletedEvent>,
-    IMessageHandler<NotificationsSentEvent>
+    IMessageHandler<NotificationsSentEvent>,
 
     // Failure events
     IMessageHandler<MemberWarningFailedEvent>,
@@ -444,6 +444,23 @@ public class WorkspaceDeletionSagaOrchestrator :
     {
         return CompensationFailed(
             message, "Cancellation notification", ct);
+    }
+
+    public async Task HandleAsync(
+        FilePurgeCompletedEvent message,
+        CancellationToken ct = default)
+    {
+        var state = await _sagaRepo.GetById(message.SagaId);
+
+        if (state is null || state.FilePurgeCompleted)
+            return;
+
+        state.FilePurgeCompleted = true;
+
+        if (state.IsFailed)
+            state.RequiresManualIntervention = true;
+
+        await TryCompleteSaga(state);
     }
 }
 
