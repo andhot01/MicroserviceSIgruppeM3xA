@@ -162,3 +162,8 @@ Ten east/west tests and six Vault tests were run, and all gave the expected resu
 - Vault returns 403 for an invalid token, for another path and for an attempt to overwrite the secret. A sealed Vault returns 503 and the service does not start. After unsealing, the secret is still there.
 
 The complete test tables are in the docs file.
+
+
+## Saga Pattern
+Implemented an orchestration-based Saga pattern for the scenario where a workspace is deleted by its last admin.
+The Notif service acts as the saga orchestrator, coordinating transactions and compensating transactions across multiple microservices thorugh RabitMQ and the exisitng MessageClient.
